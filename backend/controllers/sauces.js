@@ -58,10 +58,10 @@ exports.stateOfSauce = (req, res, next) => {
         const sauceObject = req.body.like;
 
         switch ( sauceObject ) {
-            case 1: 
-                if (like <= -1) {
-                    sauce.usersLiked.push(req.body.userId);
-                    sauce.likes += 1;
+            case 0: 
+                if (like > -1) {
+                    sauce.usersLiked.splice(like, 1);
+                    sauce.likes -= 1;
                 } 
                 
                 if (dislike > -1){
@@ -69,10 +69,10 @@ exports.stateOfSauce = (req, res, next) => {
                     sauce.dislikes -= 1;
                 }
             break;
-            case 0: 
-                if (like > -1) {
-                    sauce.usersLiked.splice(like, 1);
-                    sauce.likes -= 1;
+            case 1: 
+                if (like <= -1) {
+                    sauce.usersLiked.push(req.body.userId);
+                    sauce.likes += 1;
                 } 
                 
                 if (dislike > -1){
