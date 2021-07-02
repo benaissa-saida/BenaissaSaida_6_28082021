@@ -6,7 +6,7 @@ const sauceCtrl = require('../controllers/sauces');
 const auth = require('../middleware/auth');
 const multer = require('../middleware/multer-config');
 
-router.post('/', auth, multer, sauceCtrl.createSauce);
+router.post('/', auth, multer, sauceCtrl.createSauce); //réimplémente notre logique, l'authentification par email et mdp, et 
 
 router.post('/:id/like', auth, sauceCtrl.stateOfSauce);
 

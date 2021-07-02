@@ -72,7 +72,7 @@ app.use(xssClean());
 //Gére les images dans le fichier image statique
 app.use('/images', express.static(path.join(__dirname, 'images')));
 
-app.use('/api/sauces', sauceRoutes);
-app.use('/api/auth', userRoutes);
+app.use('/api/sauces', sauceRoutes); //importe notre logique de route pour les sauces
+app.use('/api/auth', userRoutes);// importe notre logique de route pour les utilisateurs
 
 module.exports = app;
