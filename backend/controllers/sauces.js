@@ -1,15 +1,17 @@
 const Sauce = require('../models/Sauces');
-const fs = require('fs');
+const fs = require('fs'); // donne accès aux différentes opérations lié au système de fichier 
 
 
 exports.createSauce = (req, res, next) => {
-    const sauceObject = JSON.parse(req.body.sauce);
+    const sauceObject = JSON.parse(req.body.sauce); // On obtient un objet utilisable grace à JSON.parse()
     delete sauceObject._id; //Avant de copier l'objet on retire l'id provenant du front-end
     const sauce = new Sauce({ //nouvelle instance de notre modéle "Sauce"
         /*opérateur spread "..." utilisé pour copier tous les éléments
         du body de notre requête */
         ...sauceObject,
         imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
+        /* On modifie l'url de l'image puisqu'il à été modifié avec multer. On récupére du coup les segment de l'image
+         protocol(HTTP(S))://host(localhost)/images/nom_du_fichier*/
     });
     sauce.save()
     .then(() => res.status(201).json({ message: 'Sauce enregistré !'}))
@@ -17,11 +19,12 @@ exports.createSauce = (req, res, next) => {
 };
 
 exports.modifySauce = (req, res, next) =>{
-    const sauceObject = req.file ? 
-    {
+    const sauceObject = req.file ? // Si req.file existe alors
+    { //On récupére les infos comme pour post 
         ...JSON.parse(req.body.sauce),
         imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
-    } : {...req.body};
+    } : { // sinon on prend simplement le corps de la requête
+        ...req.body};
     Sauce.updateOne({ _id: req.params.id }, { ...sauceObject,  _id: req.params.id })
     /* Cette methode permet de mettre à jour la Sauce de notre base de donnée le premier argument est
     l'objet de comparaison(id = id envoyé paramètre de la requête), et le second c'est le nouvel objet
@@ -32,12 +35,12 @@ exports.modifySauce = (req, res, next) =>{
 };
 
 exports.deleteSauce = (req, res, next) => {
-    Sauce.findOne({ _id: req.params.id })
-      .then(sauce => {
-        const filename = sauce.imageUrl.split('/images/')[1];
-        fs.unlink(`images/${filename}`, () => {
+    Sauce.findOne({ _id: req.params.id }) // on trouve le fichier avec son id
+      .then(sauce => {  // récupération du nom du fichier précis
+        const filename = sauce.imageUrl.split('/images/')[1]; // on split pour retrouver le bon nom
+        fs.unlink(`images/${filename}`, () => { //fs.unlink nous permet de le supprimer
             Sauce.deleteOne({ _id: req.params.id })
-            /* methode a qui on passe un objet (id) correspondant au doc à supprimer
+            /* methode a qui on passe un objet (id) correspondant au fichier à supprimer de la base
             avant d'envoyer une réponse de réussite (200), ou échec (400) au front-end */
             .then(() => res.status(200).json({ message: 'Sauce supprimé !'}))
             .catch(error => res.status(400).json({ error }));

@@ -1,12 +1,14 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const path = require('path');
-const helmet = require('helmet');
+
+//varibales sécurité 
+const helmet = require('helmet'); // sécurise les informations présentes dans le Header
 const xssClean = require('xss-clean');
 const cookieSession = require('cookie-session');
 
 //Désactive la mise en cache coté client
-// const noCache = require('nocache');
+const noCache = require('nocache');
 
 
 //Module npm change les variables d'environnement
@@ -49,16 +51,20 @@ app.use(
     name : 'session',
     keys : ['key1', 'key2'],
     cookie: {
-      secure: true,
-      httpOnly: true,
+      secure: true, 
+      //garantie que le navigateur envoie le cookie sur HTTPS
+      httpOnly: true, 
+      /* Garantit que le cookie n’est envoyé que sur HTTP(S), pas au JavaScript du client, 
+      ce qui renforce la protection contre les attaques de type cross-site scripting. */
       domain: 'http://localhost:3000/',
-      expires: expiryDate
+      expires: expiryDate 
+      //utilise une date d'expitation pour les cookies persistants
     }
   })
 );
 
-//Désactive les caches
-// app.use(noCache());
+// Désactive les caches
+app.use(noCache());
 
 //Methode qui neutralise l'en-tête et empêcher les attaques ciblés 
 app.disable('x-powered-by');
@@ -69,7 +75,8 @@ app.use(bodyParser.json());
 //Methode qui nettoie les entrées utili du corps POST, requêtes GET et des paramètres URL
 app.use(xssClean());
 
-//Gére les images dans le fichier image statique
+/*Gére les images dans le fichier image statique pour nous le servir avec express.static 
+et le path nous permettra de trouver le fichier dans notre dossier images */
 app.use('/images', express.static(path.join(__dirname, 'images')));
 
 app.use('/api/sauces', sauceRoutes); //importe notre logique de route pour les sauces
