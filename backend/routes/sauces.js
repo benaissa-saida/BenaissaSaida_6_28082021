@@ -1,4 +1,3 @@
-// const { Router } = require('express');
 const express = require('express');
 const router = express.Router();
 
@@ -7,7 +6,8 @@ const auth = require('../middleware/auth');
 const multer = require('../middleware/multer-config');
 
 router.post('/', auth, multer, sauceCtrl.createSauce); 
-//réimplémente notre logique, l'authentification par email et mdp, et permet à multer de gérer les fichiers entrants
+/* réimplémente notre logique, l'authentification par email et mdp, 
+et permet à multer de gérer les fichiers entrants */
 
 router.post('/:id/like', auth, sauceCtrl.stateOfSauce);
 

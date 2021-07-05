@@ -6,12 +6,12 @@ exports.createSauce = (req, res, next) => {
     const sauceObject = JSON.parse(req.body.sauce); // On obtient un objet utilisable grace à JSON.parse()
     delete sauceObject._id; //Avant de copier l'objet on retire l'id provenant du front-end
     const sauce = new Sauce({ //nouvelle instance de notre modéle "Sauce"
+        ...sauceObject,
         /*opérateur spread "..." utilisé pour copier tous les éléments
         du body de notre requête */
-        ...sauceObject,
         imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
-        /* On modifie l'url de l'image puisqu'il à été modifié avec multer. On récupére du coup les segment de l'image
-         protocol(HTTP(S))://host(localhost)/images/nom_du_fichier*/
+        /* On modifie l'url de l'image puisqu'il à été modifié avec multer. On récupére du coup les 
+        segment de l'image protocol(HTTP(S))://host(localhost)/images/nom_du_fichier*/
     });
     sauce.save()
     .then(() => res.status(201).json({ message: 'Sauce enregistré !'}))
