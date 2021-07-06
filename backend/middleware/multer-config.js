@@ -1,6 +1,5 @@
 const multer = require('multer');
-/* Package qui nous permet de gérer les fichers entrants 
-dans les requêtes HTTP. */
+// Package qui nous permet de gérer les fichers entrants dans les requêtes HTTP. 
 
 const MIME_TYPES = { //dictionnaire 
   'image/jpg': 'jpg',

@@ -1,4 +1,5 @@
-const emailValidator = require('validator'); //module de validation des email, il nettoie et désinfecte les chaînes
+const emailValidator = require('validator'); 
+//module de validation des email, il nettoie et désinfecte les chaînes
 
 module.exports = (req, res, next) =>{
     if (!emailValidator.isEmail(req.body.email)){ // si la chaine entrée n'est pas un email valide

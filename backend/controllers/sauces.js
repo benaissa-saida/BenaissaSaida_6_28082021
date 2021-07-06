@@ -7,11 +7,9 @@ exports.createSauce = (req, res, next) => {
     delete sauceObject._id; //Avant de copier l'objet on retire l'id provenant du front-end
     const sauce = new Sauce({ //nouvelle instance de notre modéle "Sauce"
         ...sauceObject,
-        /*opérateur spread "..." utilisé pour copier tous les éléments
-        du body de notre requête */
+        // opérateur spread "..." utilisé pour copier tous les éléments du body de notre requête 
         imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
-        /* On modifie l'url de l'image puisqu'il à été modifié avec multer. On récupére du coup les 
-        segment de l'image protocol(HTTP(S))://host(localhost)/images/nom_du_fichier*/
+        // On récupére les segments de l'image modifié précédemment par multer
     });
     sauce.save()
     .then(() => res.status(201).json({ message: 'Sauce enregistré !'}))
@@ -26,10 +24,8 @@ exports.modifySauce = (req, res, next) =>{
     } : { // sinon on prend simplement le corps de la requête
         ...req.body};
     Sauce.updateOne({ _id: req.params.id }, { ...sauceObject,  _id: req.params.id })
-    /* Cette methode permet de mettre à jour la Sauce de notre base de donnée le premier argument est
-    l'objet de comparaison(id = id envoyé paramètre de la requête), et le second c'est le nouvel objet
-    en utilisant le spread pour récup la sauce dans le corps de la requete avec le bon id
-    qui est similaire à l'id de comparaison. */
+    /*Mise à jour la sauce dans notre base de donnée, le premier argument est l'objet de comparaison,
+    et le second c'est le nouvel objet en utilisant le spread pour récup la sauce dans le corps de la requete. */
     .then(() => res.status(200).json({ message: 'Sauce modifié !'}))
     .catch(error => res.status(400).json({ error }));
 };
@@ -38,10 +34,9 @@ exports.deleteSauce = (req, res, next) => {
     Sauce.findOne({ _id: req.params.id }) // on trouve le fichier avec son id
       .then(sauce => {  // récupération du nom du fichier précis
         const filename = sauce.imageUrl.split('/images/')[1]; // on split pour retrouver le bon nom
-        fs.unlink(`images/${filename}`, () => { //fs.unlink nous permet de le supprimer
+        fs.unlink(`images/${filename}`, () => { //fs.unlink nous permet de le supprimer du système
             Sauce.deleteOne({ _id: req.params.id })
-            /* methode a qui on passe un objet (id) correspondant au fichier à supprimer de la base
-            avant d'envoyer une réponse de réussite (200), ou échec (400) au front-end */
+            // On passe un objet (id) correspondant au fichier à supprimer de la base
             .then(() => res.status(200).json({ message: 'Sauce supprimé !'}))
             .catch(error => res.status(400).json({ error }));
         });
@@ -57,8 +52,7 @@ exports.getOneSauce = (req, res, next) => {
 
 exports.getAllSauce = (req, res, next) => {
     Sauce.find() 
-    /*methode "find()" renvoie le tableau contenant toutes les sauces
-    dans notre base de donnée. Avant de les afficher sur la page d'accueil */
+    //methode "find()" renvoie le tableau contenant toutes les sauces
     .then(sauces => res.status(200).json(sauces))
     .catch(error => res.status(400).json({ error }))
 };
@@ -71,6 +65,23 @@ exports.stateOfSauce = (req, res, next) => {
         const sauceObject = req.body.like;
 
         switch ( sauceObject ) {
+            // L'utilisateur like
+            case 1: 
+                if (like <= -1) {
+                    sauce.usersLiked.push(req.body.userId);
+                    sauce.likes += 1;
+                } 
+            break;
+
+            //L'utilisateur dislike
+            case -1: 
+                if (dislike <= -1){
+                    sauce.usersDisliked.push(req.body.userId);
+                    sauce.dislikes += 1;
+                }
+            break;
+
+            //l'utilisateur enlève son choix
             case 0: 
                 if (like > -1) {
                     sauce.usersLiked.splice(like, 1);
@@ -80,18 +91,6 @@ exports.stateOfSauce = (req, res, next) => {
                 if (dislike > -1){
                     sauce.usersDisliked.splice(dislike, 1);
                     sauce.dislikes -= 1;
-                }
-            break;
-            case 1: 
-                if (like <= -1) {
-                    sauce.usersLiked.push(req.body.userId);
-                    sauce.likes += 1;
-                } 
-            break;
-            case -1: 
-                if (dislike <= -1){
-                    sauce.usersDisliked.push(req.body.userId);
-                    sauce.dislikes += 1;
                 }
             break;
         }
