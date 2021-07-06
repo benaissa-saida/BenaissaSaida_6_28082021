@@ -4,7 +4,8 @@ const multer = require('multer');
 const MIME_TYPES = { //dictionnaire 
   'image/jpg': 'jpg',
   'image/jpeg': 'jpg',
-  'image/png': 'png'
+  'image/png': 'png',
+  'image/webp': 'webp'
 };
 
 const storage = multer.diskStorage({ // contient la logique pour indiquer à multer où enregistrer les fichiers
