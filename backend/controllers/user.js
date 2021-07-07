@@ -7,7 +7,7 @@ const maskData = require('maskdata');
 
 const emailMaskOpt = {
   maskWith: '*',
-  unmaskedStartCharactersBeforeAt: 2, //laisse seulement 2 caractères non cachés avant l'@
+  unmaskedStartCharactersBeforeAt: 1, //laisse seulement 1 caractères non cachés avant l'@
   unmaskedEndCharactersAfterAt: 3, //laisse seulement 3 caractères non cachés après l'@
   maskAtTheRate: false,
 };
