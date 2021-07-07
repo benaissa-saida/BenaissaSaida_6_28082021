@@ -11,7 +11,7 @@ const cookieSession = require('cookie-session');
 const noCache = require('nocache');
 
 
-//Module npm change les variables d'environnement
+//Module npm charge les variables d'environnement
 const db = require('./config');
 
 
